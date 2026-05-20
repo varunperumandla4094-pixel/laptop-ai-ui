@@ -143,7 +143,7 @@ function App() {
     try {
 
       const response = await axios.post(
-        "http://localhost:8000/chat",
+        "https://laptop-ai-backend.onrender.com/chat",
         {
           message: userInput,
         }
