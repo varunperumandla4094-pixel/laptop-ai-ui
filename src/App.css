@@ -12,10 +12,12 @@ body {
 
 .sidebar {
   width: 260px;
+  min-width: 260px;
   background-color: #202123;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .sidebar h2 {
@@ -41,6 +43,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .chat-header {
@@ -53,6 +56,7 @@ body {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .welcome {
@@ -165,6 +169,10 @@ body {
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .conversation-item:hover {
@@ -173,4 +181,11 @@ body {
 
 .conversation-item.active {
   background-color: #19c37d;
+}
+
+.message,
+.markdown-content {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }

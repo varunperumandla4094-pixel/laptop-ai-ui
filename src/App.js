@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 function App() {
 
@@ -142,7 +143,7 @@ function App() {
     try {
 
       const response = await axios.post(
-        "https://laptop-ai-backend.onrender.com/chat",
+        "http://localhost:8000/chat",
         {
           message: userInput,
         }
@@ -151,6 +152,7 @@ function App() {
       const botMessage = {
         sender: "bot",
         text: response.data.response,
+        products: response.data.products || [],
       };
 
       // ADD BOT RESPONSE
@@ -249,9 +251,45 @@ function App() {
 
                 <div className="markdown-content">
 
-                  <ReactMarkdown>
+                  <ReactMarkdown rehypePlugins={[rehypeRaw]}>
                     {msg.text}
                   </ReactMarkdown>
+                  {msg.products && msg.products.length > 0 && (
+
+  <div className="product-grid">
+
+    {msg.products.map((product, idx) => (
+
+      <div className="product-card" key={idx}>
+
+        <img
+          src={product.thumbnail}
+          alt={product.title}
+          className="product-image"
+        />
+
+        <h3>{product.title}</h3>
+
+        <p><strong>Price:</strong> {product.price}</p>
+
+        <p><strong>Rating:</strong> {product.rating}</p>
+
+        <a
+          href={product.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="buy-button"
+        >
+          Buy Now
+        </a>
+
+      </div>
+
+    ))}
+
+  </div>
+
+)}
 
                 </div>
 
