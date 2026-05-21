@@ -157,7 +157,7 @@ function App() {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:8000/chat",
+        "https://laptop-ai-backend.onrender.com/chat",
         {
           message: userInput,
         }
@@ -302,7 +302,7 @@ function App() {
     ))}
     {loading && (
 
-  <div className="message bot">
+  <div className="message bot thinking-message">
 
     <div className="thinking-dots">
 
