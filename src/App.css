@@ -189,3 +189,69 @@ body {
   word-wrap: break-word;
   word-break: break-word;
 }
+
+.product-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.product-card {
+  background-color: #343541;
+  padding: 15px;
+  border-radius: 12px;
+  width: 250px;
+}
+
+.product-image {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.buy-button {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #19c37d;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.buy-button:hover {
+  opacity: 0.9;
+}
+.thinking-dots {
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+}
+
+.thinking-dots span {
+  width: 10px;
+  height: 10px;
+  background-color: #19c37d;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.thinking-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.thinking-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+
+  40% {
+    transform: scale(1);
+  }
+
+}

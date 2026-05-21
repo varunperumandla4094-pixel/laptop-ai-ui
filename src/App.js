@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "./App.css";
 import ReactMarkdown from "react-markdown";
@@ -12,7 +12,11 @@ function App() {
   const [activeChatId, setActiveChatId] =
     useState(null);
 
+  const messagesEndRef = useRef(null);
+
   const [input, setInput] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   // ACTIVE CONVERSATION
   const activeConversation =
@@ -68,6 +72,14 @@ function App() {
     }
 
   }, [conversations]);
+
+  useEffect(() => {
+
+  messagesEndRef.current?.scrollIntoView({
+    behavior: "smooth",
+  });
+
+}, [conversations]);
 
   // CREATE NEW CHAT
   const createNewChat = () => {
@@ -142,8 +154,10 @@ function App() {
 
     try {
 
+      setLoading(true);
+
       const response = await axios.post(
-        "https://laptop-ai-backend.onrender.com/chat",
+        "http://localhost:8000/chat",
         {
           message: userInput,
         }
@@ -173,9 +187,10 @@ function App() {
           return conv;
         })
       );
-
+    setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -284,9 +299,23 @@ function App() {
         </a>
 
       </div>
-
     ))}
+    {loading && (
 
+  <div className="message bot">
+
+    <div className="thinking-dots">
+
+      <span></span>
+      <span></span>
+      <span></span>
+
+    </div>
+
+  </div>
+
+)}
+      <div ref={messagesEndRef} />
   </div>
 
 )}
