@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import "./App.css";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -157,7 +156,7 @@ function App() {
       setLoading(true);
 
       const response = await fetch(
-  "http://localhost:8000/stream-chat",
+  "https://laptop-ai-backend.onrender.com/chat",
   {
     method: "POST",
     headers: {
@@ -173,7 +172,7 @@ const reader = response.body.getReader();
 
 const decoder = new TextDecoder();
 
-let streamedText = "";
+let fullText = "";
 
 const tempBotMessage = {
   sender: "bot",
@@ -211,7 +210,7 @@ while (true) {
   const chunk =
     decoder.decode(value);
 
-  streamedText += chunk;
+  fullText += chunk;
 
   setConversations((prev) =>
     prev.map((conv) => {
@@ -225,7 +224,7 @@ while (true) {
           updatedMessages.length - 1
         ] = {
           sender: "bot",
-          text: streamedText,
+          text: fullText,
           products: [],
         };
 
