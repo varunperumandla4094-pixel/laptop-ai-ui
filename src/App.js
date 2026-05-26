@@ -156,38 +156,89 @@ function App() {
 
       setLoading(true);
 
-      const response = await axios.post(
-        "https://laptop-ai-backend.onrender.com/chat",
-        {
-          message: userInput,
-        }
-      );
+      const response = await fetch(
+  "http://localhost:8000/stream-chat",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message: userInput,
+    }),
+  }
+);
 
-      const botMessage = {
-        sender: "bot",
-        text: response.data.response,
-        products: response.data.products || [],
+const reader = response.body.getReader();
+
+const decoder = new TextDecoder();
+
+let streamedText = "";
+
+const tempBotMessage = {
+  sender: "bot",
+  text: "",
+  products: [],
+};
+
+setConversations((prev) =>
+  prev.map((conv) => {
+
+    if (conv.id === currentChatId) {
+
+      return {
+        ...conv,
+        messages: [
+          ...conv.messages,
+          tempBotMessage,
+        ],
       };
 
-      // ADD BOT RESPONSE
-      setConversations((prev) =>
-        prev.map((conv) => {
+    }
 
-          if (conv.id === currentChatId) {
+    return conv;
 
-            return {
-              ...conv,
-              messages: [
-                ...conv.messages,
-                botMessage,
-              ],
-            };
-          }
+  })
+);
 
-          return conv;
-        })
-      );
-    setLoading(false);
+while (true) {
+
+  const { done, value } =
+    await reader.read();
+
+  if (done) break;
+
+  const chunk =
+    decoder.decode(value);
+
+  streamedText += chunk;
+
+  setConversations((prev) =>
+    prev.map((conv) => {
+
+      if (conv.id === currentChatId) {
+
+        const updatedMessages =
+          [...conv.messages];
+
+        updatedMessages[
+          updatedMessages.length - 1
+        ] = {
+          sender: "bot",
+          text: streamedText,
+          products: [],
+        };
+
+        return {
+          ...conv,
+          messages: updatedMessages,
+        };
+      }
+      return conv;
+    })
+  );
+}
+setLoading(false);
     } catch (error) {
       console.log(error);
       setLoading(false);
