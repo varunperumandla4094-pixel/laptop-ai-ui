@@ -156,7 +156,7 @@ function App() {
       setLoading(true);
 
       const response = await fetch(
-  "https://laptop-ai-backend.onrender.com/chat",
+      "http://localhost:8000/stream-chat",
   {
     method: "POST",
     headers: {
@@ -172,7 +172,6 @@ const reader = response.body.getReader();
 
 const decoder = new TextDecoder();
 
-let fullText = "";
 
 const tempBotMessage = {
   sender: "bot",
@@ -209,33 +208,38 @@ while (true) {
 
   const chunk =
     decoder.decode(value);
+setConversations((prev) =>
+  prev.map((conv) => {
 
-  fullText += chunk;
+    if (conv.id === currentChatId) {
 
-  setConversations((prev) =>
-    prev.map((conv) => {
+      const updatedMessages =
+        [...conv.messages];
 
-      if (conv.id === currentChatId) {
-
-        const updatedMessages =
-          [...conv.messages];
-
+      const lastMessage =
         updatedMessages[
           updatedMessages.length - 1
-        ] = {
-          sender: "bot",
-          text: fullText,
-          products: [],
-        };
+        ];
 
-        return {
-          ...conv,
-          messages: updatedMessages,
-        };
-      }
-      return conv;
-    })
-  );
+      updatedMessages[
+        updatedMessages.length - 1
+      ] = {
+        ...lastMessage,
+        text:
+          lastMessage.text + chunk,
+      };
+
+      return {
+        ...conv,
+        messages: updatedMessages,
+      };
+
+    }
+
+    return conv;
+
+  })
+);
 }
 setLoading(false);
     } catch (error) {
