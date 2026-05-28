@@ -198,6 +198,7 @@ setConversations((prev) =>
 
   })
 );
+let buffer = "";
 
 while (true) {
 
@@ -206,40 +207,111 @@ while (true) {
 
   if (done) break;
 
-  const chunk =
-    decoder.decode(value);
-setConversations((prev) =>
-  prev.map((conv) => {
+ const chunk =
+  decoder.decode(value);
 
-    if (conv.id === currentChatId) {
+buffer += chunk;
 
-      const updatedMessages =
-        [...conv.messages];
+const events =
+  buffer.split("\n");
 
-      const lastMessage =
-        updatedMessages[
-          updatedMessages.length - 1
-        ];
+buffer = events.pop();
+for (const event of events) {
 
-      updatedMessages[
-        updatedMessages.length - 1
-      ] = {
-        ...lastMessage,
-        text:
-          lastMessage.text + chunk,
-      };
+  let parsed;
 
-      return {
-        ...conv,
-        messages: updatedMessages,
-      };
+try {
 
-    }
+  parsed = JSON.parse(event);
 
-    return conv;
+} catch {
 
-  })
-);
+  continue;
+
+}
+
+  // TOKEN EVENT
+  if (parsed.type === "token") {
+
+    setConversations((prev) =>
+      prev.map((conv) => {
+
+        if (conv.id === currentChatId) {
+
+          const updatedMessages =
+            [...conv.messages];
+
+          const lastMessage =
+            updatedMessages[
+              updatedMessages.length - 1
+            ];
+
+          updatedMessages[
+            updatedMessages.length - 1
+          ] = {
+            ...lastMessage,
+            text:
+              lastMessage.text +
+              parsed.content,
+          };
+
+          return {
+            ...conv,
+            messages: updatedMessages,
+          };
+
+        }
+
+        return conv;
+
+      })
+    );
+
+  }
+
+  // PRODUCTS EVENT
+  if (parsed.type === "products") {
+
+    setConversations((prev) =>
+      prev.map((conv) => {
+
+        if (conv.id === currentChatId) {
+
+          const updatedMessages =
+            [...conv.messages];
+
+          const lastMessage =
+            updatedMessages[
+              updatedMessages.length - 1
+            ];
+
+          updatedMessages[
+            updatedMessages.length - 1
+          ] = {
+            ...lastMessage,
+            products: parsed.items,
+          };
+
+          return {
+            ...conv,
+            messages: updatedMessages,
+          };
+
+        }
+
+        return conv;
+
+      })
+    );
+
+  }
+
+  // DONE EVENT
+  if (parsed.type === "done") {
+    setLoading(false);
+  }
+
+}
 }
 setLoading(false);
     } catch (error) {
