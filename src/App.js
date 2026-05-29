@@ -156,7 +156,7 @@ function App() {
       setLoading(true);
 
       const response = await fetch(
-      "http://localhost:8000/stream-chat",
+      "https://laptop-ai-ui.vercel.app/stream-chat",
   {
     method: "POST",
     headers: {
@@ -198,7 +198,6 @@ setConversations((prev) =>
 
   })
 );
-let buffer = "";
 
 while (true) {
 
